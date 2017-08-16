@@ -40,10 +40,10 @@ do
 	ceph auth get mon. -o /tmp/tmp_mon/ceph.mon.keyring
         if [[ `echo $?` != 0 ]]
         then
-                echo "13 error."
+                echo "13.1 error."
                 break
         else
-                echo "13 success."
+                echo "13.1 success."
         fi
 
         ceph mon getmap -o /tmp/tmp_mon/monmap
@@ -91,7 +91,7 @@ do
                 echo "17 success."
         fi
 
-.<<block
+<<block
 	#systemctl reset-failed ceph-mon@node$i.service
 	systemctl start ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
