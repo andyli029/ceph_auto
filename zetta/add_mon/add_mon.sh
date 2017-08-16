@@ -1,10 +1,23 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
+prefix = 192.168.124
 array=( 176 )
 for i in ${array[@]}
 do
 	
-	ip=192.168.124.$i
+	ip=$prefix.$i
+	echo "$ip"
+
+        sed -i "s/mon initial.*$/mon initial members = node$i/g" /etc/ceph/ceph.conf
+        sed -i "s/mon host.*$/mon host = $prefix.$i/g" /etc/ceph/ceph.conf
+        sed -i "s/public network.*$/public network = $prefix.0\/24/g" /etc/ceph/ceph.conf
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "fix ceph.conf error."
+                break
+        else
+                echo "fix ceph.conf success."
+        fi
 
 	cp ./ceph.conf /etc/ceph/ceph.conf
 	if [[ `echo $?` != 0 ]]
