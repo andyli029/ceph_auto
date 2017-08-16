@@ -1,10 +1,11 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
-ip=192.168.124.176 
-
 array=( 176 )
 for i in ${array[@]}
 do
+	
+	ip=192.168.124.$i
+
 	cp ./ceph.conf /etc/ceph/ceph.conf
 	if [[ `echo $?` != 0 ]]
         then
