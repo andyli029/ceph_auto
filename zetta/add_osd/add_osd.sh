@@ -1,9 +1,10 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
 array=( 4 )
+d=vdd1
 for i in ${array[@]}
 do
-	ceph-disk prepare /dev/sdb1
+	ceph-disk prepare /dev/$d
 	if [[ `echo $?` != 0 ]]
         then
                 echo "1 error."
@@ -12,7 +13,7 @@ do
                 echo "1 success."
         fi
 
-	ceph-disk activate /dev/sdb1
+	ceph-disk activate /dev/$d
         if [[ `echo $?` != 0 ]]
         then
                 echo "2 error."
