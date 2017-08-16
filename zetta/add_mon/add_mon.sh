@@ -1,6 +1,8 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
-array=( 4 )
+ip=192.168.124.176 
+
+array=( 176 )
 for i in ${array[@]}
 do
 	cp ./ceph.conf /etc/ceph/ceph.conf
@@ -41,7 +43,7 @@ do
                 echo "10 success."
         fi
 
-	monmaptool --create --add node03 192.168.24.3 --fsid a7f64266-0894-4f1e-a635-d0lizha0e993 /tmp/monmap	
+	monmaptool --create --add node$i $ip --fsid a7f64266-0894-4f1e-a635-d0lizha0e993 /tmp/monmap	
         if [[ `echo $?` != 0 ]]
         then
                 echo "11 error."
@@ -50,7 +52,7 @@ do
                 echo "11 success."
         fi
 
-        mkdir /var/lib/ceph/mon/ceph-node03
+        mkdir /var/lib/ceph/mon/ceph-node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "12 error."
@@ -58,8 +60,8 @@ do
         else
                 echo "12 success."
         fi
-        
-	chown ceph:ceph -R /var/lib/ceph/mon/ceph-node03
+.<<block
+	chown ceph:ceph -R /var/lib/ceph/mon/ceph-node$i
 	if [[ `echo $?` != 0 ]]
 	then
                 echo "12.1 error."
@@ -67,8 +69,9 @@ do
         else
                 echo "12.1 success."
         fi
+block
 
-	ceph-mon --mkfs -i node03 --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+	ceph-mon --mkfs -i node$i --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
         if [[ `echo $?` != 0 ]]
         then
                 echo "13 error."
@@ -77,7 +80,7 @@ do
                 echo "13 success."
         fi
 
-        touch /var/lib/ceph/mon/ceph-node03/done
+        touch /var/lib/ceph/mon/ceph-node$i/done
         if [[ `echo $?` != 0 ]]
         then
                 echo "15 error."
@@ -86,8 +89,17 @@ do
                 echo "15 success."
         fi
 
-	#systemctl reset-failed ceph-mon@node03.service
-	systemctl start ceph-mon@node03
+        chown ceph:ceph -R /var/lib/ceph/mon/ceph-node$i
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "15.1error."
+                break
+        else
+                echo "15.1 success."
+        fi
+
+	#systemctl reset-failed ceph-mon@node$i.service
+	systemctl start ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "16 error."
@@ -96,7 +108,7 @@ do
                 echo "16 success."
         fi
 
-        systemctl enable ceph-mon@node03
+        systemctl enable ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "16 error."

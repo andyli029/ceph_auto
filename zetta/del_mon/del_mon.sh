@@ -1,10 +1,10 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
-array=( 4 )
+array=( 176 )
 for i in ${array[@]}
 do
-        #systemctl reset-failed ceph-mon@node03.service
-        systemctl stop ceph-mon@node03
+        #systemctl reset-failed ceph-mon@node$i.service
+        systemctl stop ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "1 error."
@@ -13,7 +13,7 @@ do
                 echo "1 success."
         fi
 
-        systemctl disable ceph-mon@node03
+        systemctl disable ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "2 error."
@@ -68,7 +68,7 @@ do
                 echo "11 success."
         fi
 
-        rm -rf /var/lib/ceph/mon/ceph-node03
+        rm -rf /var/lib/ceph/mon/ceph-node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "12 error."
@@ -77,7 +77,7 @@ do
                 echo "12 success."
         fi
 
-        rm -f /var/lib/ceph/mon/ceph-node03/done
+        rm -f /var/lib/ceph/mon/ceph-node$i/done
 	if [[ `echo $?` != 0 ]]
         then
                 echo "15 error."
@@ -86,8 +86,8 @@ do
                 echo "15 success."
         fi
 
-	#systemctl reset-failed ceph-mon@node03.service
-	systemctl stop ceph-mon@node03
+	#systemctl reset-failed ceph-mon@node$i.service
+	systemctl stop ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "16 error."
@@ -96,7 +96,7 @@ do
                 echo "16 success."
         fi
 
-        systemctl disable ceph-mon@node03
+        systemctl disable ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "16 error."
