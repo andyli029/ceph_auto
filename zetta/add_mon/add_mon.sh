@@ -1,6 +1,6 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
-prefix = 192.168.124
+prefix=192.168.124
 array=( 176 )
 for i in ${array[@]}
 do
