@@ -82,7 +82,7 @@ do
                 echo "16 success."
         fi
 
-	#ceph-mon -i node$i --public-addr $ip
+	ceph-mon -i node$i --public-addr $ip
         if [[ `echo $?` != 0 ]]
         then
                 echo "17 error."
