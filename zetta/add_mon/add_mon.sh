@@ -1,13 +1,12 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
 prefix=192.168.124
-array=( 176 )
+array=( 175 )
 for i in ${array[@]}
 do
 	
 	ip=$prefix.$i
 	echo "$ip"
-
 
 	rm -f /etc/ceph/ceph.conf
 	if [[ `echo $?` != 0 ]]
@@ -17,8 +16,9 @@ do
         else
                 echo "cp ceph.conf success."
         fi
-
-        mkdir /var/lib/ceph/mon/ceph-node$i
+	
+	rm -rf /var/lib/ceph/mon/ceph-node$i
+	mkdir /var/lib/ceph/mon/ceph-node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "12 error."
@@ -27,7 +27,8 @@ do
                 echo "12 success."
         fi
 
-	ceph auth get mon. -o /tmp/ceph.mon.keyring
+	rm -rf /tmp/tmp_mon
+	mkdir /tmp/tmp_mon
         if [[ `echo $?` != 0 ]]
         then
                 echo "13 error."
@@ -36,7 +37,16 @@ do
                 echo "13 success."
         fi
 
-        ceph mon getmap -o /tmp/monmap
+	ceph auth get mon. -o /tmp/tmp_mon/ceph.mon.keyring
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "13 error."
+                break
+        else
+                echo "13 success."
+        fi
+
+        ceph mon getmap -o /tmp/tmp_mon/monmap
         if [[ `echo $?` != 0 ]]
         then
                 echo "14 error."
@@ -45,7 +55,7 @@ do
                 echo "14 success."
         fi
 
-	ceph-mon --mkfs -i node$i --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+	ceph-mon --mkfs -i node$i --monmap /tmp/tmp_mon/monmap --keyring /tmp/tmp_mon/ceph.mon.keyring
         if [[ `echo $?` != 0 ]]
         then
                 echo "15 error."
@@ -63,7 +73,7 @@ do
                 echo "15.1 success."
         fi
 
-	mon add node$i $ip
+	ceph mon add node$i $ip
         if [[ `echo $?` != 0 ]]
         then
                 echo "16 error."
@@ -72,7 +82,7 @@ do
                 echo "16 success."
         fi
 
-	ceph-mon -i node$i --public-addr $ip
+	#ceph-mon -i node$i --public-addr $ip
         if [[ `echo $?` != 0 ]]
         then
                 echo "17 error."
