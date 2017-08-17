@@ -80,7 +80,7 @@ if_0
                 echo "5.2 success."
         fi
         
-	ceph-osd -i 0 --mkfs --mkkey --osd-uuid $uuid
+	ceph-osd -i $i --mkfs --mkkey --osd-uuid $uuid
 	if [[ `echo $?` != 0 ]]
 	then
                 echo "6 error."
