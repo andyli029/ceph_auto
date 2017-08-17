@@ -74,7 +74,7 @@ do
         else
                 echo "12 success."
         fi
-.<<block
+:<<block
 	chown ceph:ceph -R /var/lib/ceph/mon/ceph-node$i
 	if [[ `echo $?` != 0 ]]
 	then

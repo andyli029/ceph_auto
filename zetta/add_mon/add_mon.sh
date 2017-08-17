@@ -1,7 +1,7 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
 prefix=192.168.124
-array=( 175 )
+array=( 176 )
 for i in ${array[@]}
 do
 	
@@ -91,7 +91,7 @@ do
                 echo "17 success."
         fi
 
-<<block
+:<<block
 	#systemctl reset-failed ceph-mon@node$i.service
 	systemctl start ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
