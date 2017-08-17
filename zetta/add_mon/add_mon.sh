@@ -8,7 +8,7 @@ do
 	ip=$prefix.$i
 	echo "$ip"
 
-	rm -f /etc/ceph/ceph.conf
+	#rm -f /etc/ceph/ceph.conf
 	if [[ `echo $?` != 0 ]]
         then
                 echo "cp ceph.conf error."
