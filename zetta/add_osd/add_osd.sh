@@ -61,6 +61,7 @@ if_0
                 echo "4.1 success."
         fi
 
+	umount /var/lib/ceph/osd/ceph-$i
 	mkfs.xfs -f /dev/$d   
 	if [[ `echo $?` != 0 ]]
         then
@@ -70,7 +71,6 @@ if_0
                 echo "5 success."
         fi
 
-        umount /var/lib/ceph/osd/ceph-$i
 	mount -o noatime,nodiratime,inode64 /dev/$d /var/lib/ceph/osd/ceph-$i
 	if [[ `echo $?` != 0 ]]
         then
