@@ -1,9 +1,18 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
-array=( 4 )
-d=vdd1
+################ var ###### 
+array=( 0 )
+h=node176
+###########################
+
 for i in ${array[@]}
 do
+###### var ######
+d=vdd1
+uuid=a7f64266-0894-4f1e-a635-d0ffffb0e99$i
+#################
+
+:<<if_0
 	ceph-disk prepare /dev/$d
 	if [[ `echo $?` != 0 ]]
         then
@@ -21,8 +30,10 @@ do
         else
                 echo "2 success."
         fi
-:<<BLOCK
-	ceph osd create a7f64266-0894-4f1e-a635-d0ffffb0e993
+if_0
+
+#:<<BLOCK
+	ceph osd create $uuid
 	if [[ `echo $?` != 0 ]]
         then
                 echo "3 error."
@@ -31,7 +42,8 @@ do
                 echo "3 success."
         fi
 
-        mkdir /var/lib/ceph/osd/ceph-0
+	rm -rf /var/lib/ceph/osd/ceph-$i
+        mkdir /var/lib/ceph/osd/ceph-$i
 	if [[ `echo $?` != 0 ]]
         then
                 echo "4 error."
@@ -40,7 +52,7 @@ do
                 echo "4 success."
         fi
 
-        chown ceph:ceph -R /var/lib/ceph/osd/ceph-0
+        chown ceph:ceph -R /var/lib/ceph/osd/ceph-$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "4.1 error."
@@ -49,7 +61,7 @@ do
                 echo "4.1 success."
         fi
 
-	mkfs -t xfs /dev/sdb1   
+	mkfs.xfs -f /dev/$d   
 	if [[ `echo $?` != 0 ]]
         then
                 echo "5 error."
@@ -58,7 +70,8 @@ do
                 echo "5 success."
         fi
 
-        mount -o user_xattr /dev/sdb1 /var/lib/ceph/osd/ceph-0
+        umount /var/lib/ceph/osd/ceph-$i
+	mount -o noatime,nodiratime,inode64 /dev/$d /var/lib/ceph/osd/ceph-$i
 	if [[ `echo $?` != 0 ]]
         then
                 echo "5.1 error."
@@ -67,7 +80,7 @@ do
                 echo "5.2 success."
         fi
         
-	ceph-osd -i 0 --mkfs --mkkey --osd-uuid a7f64266-0894-4f1e-a635-d0ffffb0e993
+	ceph-osd -i 0 --mkfs --mkkey --osd-uuid $uuid
 	if [[ `echo $?` != 0 ]]
 	then
                 echo "6 error."
@@ -76,7 +89,16 @@ do
                 echo "6 success."
         fi
 
-	ceph auth add osd.0 osd 'allow *' mon 'allow profile osd' -i /var/lib/ceph/osd/ceph-0/keyring
+        chown ceph:ceph -R /var/lib/ceph/osd/ceph-$i
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "6.1 error."
+                break
+        else
+                echo "6.1 success."
+        fi
+
+	ceph auth add osd.$i osd 'allow *' mon 'allow profile osd' -i /var/lib/ceph/osd/ceph-$i/keyring
         if [[ `echo $?` != 0 ]]
         then
                 echo "7 error."
@@ -85,7 +107,7 @@ do
                 echo "7 success."
         fi
 
-        ceph osd crush add-bucket node03 host
+        ceph osd crush add-bucket $h host
 	if [[ `echo $?` != 0 ]]
         then
                 echo "8 error."
@@ -94,7 +116,7 @@ do
                 echo "8 success."
         fi
 
-        ceph osd crush move node03 root=default
+        ceph osd crush move $h root=default
 	if [[ `echo $?` != 0 ]]
         then
                 echo "9 error."
@@ -103,7 +125,7 @@ do
                 echo "9 success."
         fi
 
-        ceph osd crush add osd.0 1.0 host=node03
+        ceph osd crush add osd.$i 1.0 host=$h
 	if [[ `echo $?` != 0 ]]
         then
                 echo "10 error."
@@ -112,7 +134,8 @@ do
                 echo "10 success."
         fi
 
-        systemctl start ceph-osd@0
+	systemctl reset-failed ceph-osd@$i.service
+        systemctl start ceph-osd@$i
 	if [[ `echo $?` != 0 ]]
         then
                 echo "11 error."
@@ -120,7 +143,7 @@ do
         else
                 echo "11 success."
         fi
-BLOCK
+#BLOCK
 
 	ps -ef |grep ceph-osd && ceph osd tree
 	#ceph osd lspools && ceph -s && ps -ef |grep ceph-mon

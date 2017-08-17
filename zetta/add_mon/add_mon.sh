@@ -96,23 +96,23 @@ do
 	systemctl start ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
-                echo "16 error."
+                echo "18 error."
                 break
         else
-                echo "16 success."
+                echo "18 success."
         fi
-
+block
         systemctl enable ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
-                echo "16 error."
+                echo "19 error."
                 break
         else
-                echo "16 success."
+                echo "19 success."
         fi
 
 	ps -ef |grep ceph-mon
 	#ceph osd lspools && ceph -s && ps -ef |grep ceph-mon
-block
+#block
 
 done
