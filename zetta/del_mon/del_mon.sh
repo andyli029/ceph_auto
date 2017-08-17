@@ -4,7 +4,7 @@ array=( 176 )
 for i in ${array[@]}
 do
         #systemctl reset-failed ceph-mon@node$i.service
-        systemctl stop ceph-mon@node$i
+	systemctl stop ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "1 error."
@@ -12,6 +12,7 @@ do
         else
                 echo "1 success."
         fi
+	kill -9 `ps -ef |grep ceph-mon |awk '{print $2}' |sed -n '1p'`
 
         systemctl disable ceph-mon@node$i
         if [[ `echo $?` != 0 ]]

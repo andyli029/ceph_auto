@@ -82,7 +82,9 @@ do
                 echo "16 success."
         fi
 
-	ceph-mon -i node$i --public-addr $ip
+	#systemctl reset-failed ceph-mon@node$i.service
+        systemctl start ceph-mon@node$i
+	#ceph-mon -i node$i --public-addr $ip
         if [[ `echo $?` != 0 ]]
         then
                 echo "17 error."
