@@ -41,7 +41,8 @@ if_0
         else
                 echo "3 success."
         fi
-
+	
+	umount /var/lib/ceph/osd/ceph-$i
 	rm -rf /var/lib/ceph/osd/ceph-$i
         mkdir /var/lib/ceph/osd/ceph-$i
 	if [[ `echo $?` != 0 ]]
@@ -61,7 +62,6 @@ if_0
                 echo "4.1 success."
         fi
 
-	umount /var/lib/ceph/osd/ceph-$i
 	mkfs.xfs -f /dev/$d   
 	if [[ `echo $?` != 0 ]]
         then
