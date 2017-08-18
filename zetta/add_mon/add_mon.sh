@@ -1,7 +1,31 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
+
+#### var ####
 prefix=192.168.124
 array=( 176 )
+#############
+
+:<<block
+        ceph auth get-or-create client.bootstrap-osd -o /var/lib/ceph/bootstrap-osd/ceph.keyring
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "0.1 error."
+                break
+        else
+                echo "0.1 success."
+        fi
+
+        ceph auth caps client.bootstrap-osd mon "allow profile bootstrap-osd"
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "0.2 error."
+                break
+        else
+                echo "0.2 success."
+        fi
+block
+
 for i in ${array[@]}
 do
 	

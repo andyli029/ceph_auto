@@ -12,7 +12,7 @@ d=vdd
 uuid=a7f64266-0894-4f1e-a635-d0ffffb0e99$i
 #################
 
-#:<<if_0
+:<<if_0
 	ceph auth get-or-create client.bootstrap-osd -o /var/lib/ceph/bootstrap-osd/ceph.keyring
 	if [[ `echo $?` != 0 ]]
         then
@@ -30,7 +30,7 @@ uuid=a7f64266-0894-4f1e-a635-d0ffffb0e99$i
         else
                 echo "0.2 success."
         fi
-
+if_0
 	ceph-disk prepare /dev/$d
 	if [[ `echo $?` != 0 ]]
         then
