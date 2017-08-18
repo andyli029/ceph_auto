@@ -31,6 +31,16 @@ uuid=a7f64266-0894-4f1e-a635-d0ffffb0e99$i
                 echo "0.2 success."
         fi
 if_0
+        ceph-disk zap /dev/$d
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "0 error."
+                break
+        else
+                echo "0 success."
+        fi
+
+
 	ceph-disk prepare /dev/$d
 	if [[ `echo $?` != 0 ]]
         then
