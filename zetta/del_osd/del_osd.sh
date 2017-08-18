@@ -1,7 +1,7 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
 ################ var ###### 
-array=( 0 )
+array=( 4 )
 ###########################
 
 for i in ${array[@]}
@@ -18,6 +18,14 @@ do
         fi
 	
 	#kill -9 `ps -ef |grep ceph-osd|grep "id ${i}" | awk '{print $2}' |sed -n '1p'`
+	systemctl stop ceph-osd@$i
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "6 error."
+                break
+        else
+                echo "6 success."
+        fi
         if [[ `echo $?` != 0 ]]
         then
                 echo "1 error."
@@ -53,31 +61,13 @@ do
                 echo "4 success."
         fi
 
-	ceph-disk zap /dev/${d}
+	systemctl disable ceph-osd@$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "5 error."
                 break
         else
                 echo "5 success."
-        fi
-
-        systemctl stop ceph-osd@$i
-	if [[ `echo $?` != 0 ]]
-        then
-                echo "6 error."
-                break
-        else
-                echo "6 success."
-        fi
-
-	systemctl disable ceph-osd@$i
-        if [[ `echo $?` != 0 ]]
-        then
-                echo "7 error."
-                break
-        else
-                echo "7 success."
         fi
 
 	ps -ef |grep ceph-osd && ceph osd tree
