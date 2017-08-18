@@ -8,11 +8,29 @@ h=node176
 for i in ${array[@]}
 do
 ###### var ######
-d=vdd1
+d=vdd
 uuid=a7f64266-0894-4f1e-a635-d0ffffb0e99$i
 #################
 
-:<<if_0
+#:<<if_0
+	ceph auth get-or-create client.bootstrap-osd -o /var/lib/ceph/bootstrap-osd/ceph.keyring
+	if [[ `echo $?` != 0 ]]
+        then
+                echo "0.1 error."
+                break
+        else
+                echo "0.1 success."
+        fi
+	
+	ceph auth caps client.bootstrap-osd mon "allow profile bootstrap-osd"
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "0.2 error."
+                break
+        else
+                echo "0.2 success."
+        fi
+
 	ceph-disk prepare /dev/$d
 	if [[ `echo $?` != 0 ]]
         then
@@ -22,7 +40,7 @@ uuid=a7f64266-0894-4f1e-a635-d0ffffb0e99$i
                 echo "1 success."
         fi
 
-	ceph-disk activate /dev/$d
+	ceph-disk activate /dev/${d}1
         if [[ `echo $?` != 0 ]]
         then
                 echo "2 error."
@@ -30,9 +48,9 @@ uuid=a7f64266-0894-4f1e-a635-d0ffffb0e99$i
         else
                 echo "2 success."
         fi
-if_0
+#if_0
 
-#:<<BLOCK
+:<<BLOCK
 	ceph osd create $uuid
 	if [[ `echo $?` != 0 ]]
         then
@@ -143,7 +161,16 @@ if_0
         else
                 echo "11 success."
         fi
-#BLOCK
+
+	systemctl enable ceph-osd@$i
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "11 error."
+                break
+        else
+                echo "11 success."
+        fi
+BLOCK
 
 	ps -ef |grep ceph-osd && ceph osd tree
 	#ceph osd lspools && ceph -s && ps -ef |grep ceph-mon
