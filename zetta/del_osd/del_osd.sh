@@ -1,7 +1,7 @@
 #!/bin/bash
 #http://docs.ceph.com/docs/hammer/install/manual-deployment/#monitor-bootstrapping
 ################ var ###### 
-array=( 4 )
+array=( 0 )
 ###########################
 
 for i in ${array[@]}

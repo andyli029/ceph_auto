@@ -131,6 +131,24 @@ block
                 echo "16 success."
         fi
 
+        ceph auth get-or-create client.bootstrap-osd -o /var/lib/ceph/bootstrap-osd/ceph.keyring
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "17 error."
+                break
+        else
+                echo "17 success."
+        fi
+
+        ceph auth caps client.bootstrap-osd mon "allow profile bootstrap-osd"
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "18 error."
+                break
+        else
+                echo "18 success."
+        fi
+
 	ps -ef |grep ceph-mon
 	#ceph osd lspools && ceph -s && ps -ef |grep ceph-mon
 done
