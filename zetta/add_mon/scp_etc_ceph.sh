@@ -3,7 +3,7 @@
 
 #### var ####
 prefix=192.168.124
-array=( 174 175 )
+array=( 175 )
 #############
 
 for i in ${array[@]}

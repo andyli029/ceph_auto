@@ -7,8 +7,9 @@ h=node176
 
 for i in ${array[@]}
 do
-###### var ######
+###### need to change the var ######
 d=vdd
+###################################
 uuid=a7f64266-0894-4f1e-a635-d0ffffb0e99$i
 #################
 
@@ -40,7 +41,6 @@ if_0
                 echo "0 success."
         fi
 
-
 	ceph-disk prepare /dev/$d
 	if [[ `echo $?` != 0 ]]
         then
@@ -48,6 +48,15 @@ if_0
                 break
         else
                 echo "1 success."
+        fi
+
+	mkdir -p /var/lib/ceph/osd
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "1.1 error."
+                break
+        else
+                echo "1.1 success."
         fi
 
 	ceph-disk activate /dev/${d}1

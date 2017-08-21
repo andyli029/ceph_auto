@@ -21,8 +21,8 @@ do
                 echo "cp ceph.conf success."
         fi
 	
-	rm -rf /var/lib/ceph/mon/ceph-node$i
-	mkdir /var/lib/ceph/mon/ceph-node$i
+	rm -rf /var/lib/ceph/*
+	mkdir -p /var/lib/ceph/mon/ceph-node$i
         if [[ `echo $?` != 0 ]]
         then
                 echo "12 error."

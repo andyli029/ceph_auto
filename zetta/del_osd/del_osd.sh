@@ -70,6 +70,17 @@ do
                 echo "5 success."
         fi
 
+	umount /var/lib/ceph/osd/ceph-$i
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "6 error."
+                break
+        else
+                echo "6 success."
+        fi
+
 	ps -ef |grep ceph-osd && ceph osd tree
+
+	df -h
 	#ceph osd lspools && ceph -s && ps -ef |grep ceph-mon
 done

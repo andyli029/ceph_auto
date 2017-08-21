@@ -4,6 +4,15 @@ array=( 176 )
 for i in ${array[@]}
 do
         #systemctl reset-failed ceph-mon@node$i.service
+	ceph mon remove node$i
+        if [[ `echo $?` != 0 ]]
+        then
+                echo "0 error."
+                break
+        else
+                echo "0 success."
+        fi
+
 	systemctl stop ceph-mon@node$i
         if [[ `echo $?` != 0 ]]
         then
@@ -69,6 +78,7 @@ do
                 echo "11 success."
         fi
 
+	#rm -rf /var/lib/ceph/*
         rm -rf /var/lib/ceph/mon/ceph-node$i
         if [[ `echo $?` != 0 ]]
         then
